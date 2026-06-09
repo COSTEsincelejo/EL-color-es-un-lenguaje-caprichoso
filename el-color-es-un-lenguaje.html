@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>El Color es un Lenguaje Caprichoso</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #110D06;
+      --surface:  #1E1609;
+      --card:     #261C0C;
+      --gold:     #C8890A;
+      --gold-lt:  #E8B040;
+      --magenta:  #C42D6B;
+      --teal:     #2D9C8A;
+      --cream:    #F2EAD8;
+      --muted:    #A89878;
+      --radius:   12px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--cream);
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(17,13,6,.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(200,137,10,.25);
+      padding: 0 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 58px;
+    }
+    .nav-brand {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.05rem;
+      color: var(--gold);
+      letter-spacing: .04em;
+    }
+    .nav-links { display: flex; gap: 1.6rem; list-style: none; }
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: .82rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--gold-lt); }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center;
+      padding: 5rem 2rem 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 70% 60% at 30% 50%, rgba(196,45,107,.18) 0%, transparent 70%),
+        radial-gradient(ellipse 60% 50% at 75% 40%, rgba(200,137,10,.14) 0%, transparent 65%),
+        radial-gradient(ellipse 50% 80% at 60% 80%, rgba(45,156,138,.10) 0%, transparent 60%);
+    }
+    .hero-eyebrow {
+      font-size: .75rem;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.2rem;
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.8rem, 8vw, 6.5rem);
+      font-weight: 900;
+      line-height: 1.05;
+      max-width: 900px;
+    }
+    .hero h1 .accent-color { color: var(--magenta); }
+    .hero h1 .accent-gold  { color: var(--gold); }
+    .hero-sub {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+      color: var(--teal);
+      margin-top: 1.2rem;
+      letter-spacing: .06em;
+    }
+    .hero-desc {
+      margin-top: 1.6rem;
+      max-width: 580px;
+      color: var(--muted);
+      font-size: .95rem;
+    }
+    .hero-scroll {
+      margin-top: 3rem;
+      display: flex; flex-direction: column; align-items: center; gap: .5rem;
+      color: var(--muted); font-size: .78rem; letter-spacing: .12em; text-transform: uppercase;
+    }
+    .scroll-arrow {
+      width: 1px; height: 48px;
+      background: linear-gradient(to bottom, var(--gold), transparent);
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+    @keyframes scrollPulse {
+      0%,100% { opacity: .4; transform: scaleY(1); }
+      50%      { opacity: 1;  transform: scaleY(1.15); }
+    }
+
+    /* ── COLOUR WHEEL DIVIDER ── */
+    .wheel-divider {
+      display: flex; justify-content: center; padding: 2.5rem 0;
+      position: relative;
+    }
+    .cw {
+      width: 72px; height: 72px;
+      border-radius: 50%;
+      background: conic-gradient(
+        #FF0000 0deg 30deg,
+        #FF6600 30deg 60deg,
+        #FFCC00 60deg 90deg,
+        #99CC00 90deg 120deg,
+        #00CC00 120deg 150deg,
+        #00CCAA 150deg 180deg,
+        #0099CC 180deg 210deg,
+        #0033CC 210deg 240deg,
+        #6600CC 240deg 270deg,
+        #CC00CC 270deg 300deg,
+        #CC0066 300deg 330deg,
+        #FF0000 330deg 360deg
+      );
+      animation: spin 18s linear infinite;
+      box-shadow: 0 0 28px rgba(200,137,10,.35);
+    }
+    .cw::after {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: var(--bg);
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── TABLE OF CONTENTS ── */
+    .toc-section {
+      max-width: 860px; margin: 0 auto;
+      padding: 3rem 2rem 4rem;
+    }
+    .section-label {
+      font-size: .72rem; letter-spacing: .2em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: .8rem;
+    }
+    .toc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-top: 1.8rem;
+    }
+    .toc-item {
+      background: var(--card);
+      border: 1px solid rgba(200,137,10,.18);
+      border-radius: var(--radius);
+      padding: 1.2rem 1.4rem;
+      text-decoration: none;
+      color: var(--cream);
+      transition: border-color .2s, background .2s;
+      display: flex; gap: .9rem; align-items: flex-start;
+    }
+    .toc-item:hover {
+      border-color: var(--gold);
+      background: rgba(200,137,10,.08);
+    }
+    .toc-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem; font-weight: 900;
+      color: var(--gold); opacity: .5;
+      line-height: 1; min-width: 36px;
+    }
+    .toc-text strong { display: block; font-size: .92rem; margin-bottom: .2rem; }
+    .toc-text span { font-size: .8rem; color: var(--muted); }
+
+    /* ── SECTION BASE ── */
+    section {
+      padding: 5rem 2rem;
+    }
+    .container { max-width: 1000px; margin: 0 auto; }
+    .section-heading {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 700;
+      margin-bottom: 1.4rem;
+      line-height: 1.15;
+    }
+    .section-heading span { color: var(--gold); }
+    .lead {
+      font-size: 1.08rem; color: var(--muted);
+      max-width: 680px; margin-bottom: 2rem;
+    }
+
+    /* ── CONTEXT SECTION ── */
+    #contexto { background: var(--surface); }
+    .context-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 3rem;
+      align-items: center; margin-top: 2.5rem;
+    }
+    .context-grid img {
+      width: 100%; border-radius: var(--radius);
+      border: 1px solid rgba(200,137,10,.2);
+      object-fit: cover; aspect-ratio: 4/3;
+      filter: brightness(.85) saturate(1.1);
+    }
+    .quote-block {
+      border-left: 3px solid var(--magenta);
+      padding: 1.4rem 1.6rem;
+      background: rgba(196,45,107,.07);
+      border-radius: 0 var(--radius) var(--radius) 0;
+      margin: 2rem 0;
+    }
+    .quote-block p {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 1.25rem;
+      line-height: 1.5;
+      color: var(--cream);
+    }
+    .quote-block cite {
+      display: block; margin-top: .8rem;
+      font-style: normal; font-size: .8rem;
+      color: var(--muted); letter-spacing: .1em; text-transform: uppercase;
+    }
+
+    /* ── CARACTERÍSTICAS ── */
+    #caracteristicas { background: var(--bg); }
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.4rem; margin-top: 2rem;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid rgba(200,137,10,.15);
+      border-radius: var(--radius);
+      padding: 1.8rem;
+      transition: border-color .25s, transform .25s;
+    }
+    .card:hover {
+      border-color: var(--gold);
+      transform: translateY(-3px);
+    }
+    .card-icon { font-size: 2rem; margin-bottom: 1rem; }
+    .card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem; margin-bottom: .6rem; color: var(--gold-lt);
+    }
+    .card p { font-size: .88rem; color: var(--muted); line-height: 1.65; }
+
+    /* ── HISTORIA (timeline) ── */
+    #historia { background: var(--surface); }
+    .timeline { position: relative; margin-top: 3rem; }
+    .timeline::before {
+      content: '';
+      position: absolute; left: 28px; top: 0; bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--gold), var(--magenta), var(--teal));
+    }
+    .tl-item {
+      display: flex; gap: 2rem; margin-bottom: 3rem;
+      padding-left: 0;
+    }
+    .tl-dot {
+      min-width: 56px; min-height: 56px;
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      background: var(--card);
+      border: 2px solid var(--gold);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Playfair Display', serif;
+      font-size: .8rem; font-weight: 700;
+      color: var(--gold);
+      flex-shrink: 0; z-index: 1;
+    }
+    .tl-content {
+      background: var(--card);
+      border: 1px solid rgba(200,137,10,.15);
+      border-radius: var(--radius);
+      padding: 1.4rem 1.6rem;
+      flex: 1;
+    }
+    .tl-content h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem; margin-bottom: .5rem;
+      color: var(--gold-lt);
+    }
+    .tl-content p { font-size: .88rem; color: var(--muted); }
+    .tl-img {
+      margin-top: 1rem; width: 100%; max-height: 200px;
+      object-fit: cover; border-radius: 8px;
+      filter: brightness(.8) saturate(1.1);
+      border: 1px solid rgba(200,137,10,.18);
+    }
+
+    /* ── CÍRCULO CROMÁTICO ── */
+    #circulo { background: var(--bg); }
+    .two-col {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 3rem; align-items: center; margin-top: 2.5rem;
+    }
+    .two-col img {
+      width: 100%; border-radius: var(--radius);
+      border: 1px solid rgba(200,137,10,.2);
+      filter: brightness(.82) saturate(1.2);
+    }
+    .harmony-list { list-style: none; margin-top: 1.5rem; }
+    .harmony-list li {
+      display: flex; align-items: flex-start; gap: 1rem;
+      padding: .9rem 0;
+      border-bottom: 1px solid rgba(200,137,10,.1);
+    }
+    .harmony-list li:last-child { border-bottom: none; }
+    .h-dot {
+      min-width: 14px; min-height: 14px;
+      width: 14px; height: 14px;
+      border-radius: 50%; margin-top: 5px;
+    }
+    .harmony-list li strong { color: var(--gold-lt); font-size: .92rem; }
+    .harmony-list li p { font-size: .85rem; color: var(--muted); margin-top: .15rem; }
+
+    /* ── PERSONAJES ── */
+    #personajes { background: var(--surface); }
+    .personas-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.8rem; margin-top: 2rem;
+    }
+    .persona-card {
+      background: var(--card);
+      border: 1px solid rgba(200,137,10,.15);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: border-color .25s, transform .25s;
+    }
+    .persona-card:hover {
+      border-color: var(--gold);
+      transform: translateY(-4px);
+    }
+    .persona-card img {
+      width: 100%; height: 200px; object-fit: cover;
+      filter: sepia(.3) brightness(.8) saturate(1.2);
+    }
+    .persona-body { padding: 1.4rem; }
+    .persona-body h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem; color: var(--gold-lt); margin-bottom: .5rem;
+    }
+    .persona-body p { font-size: .85rem; color: var(--muted); line-height: 1.6; }
+
+    /* ── IMPORTANCIA ── */
+    #importancia { background: var(--bg); }
+    .importance-grid {
+      display: grid; grid-template-columns: 1fr 1fr 1fr;
+      gap: 1.2rem; margin-top: 2rem;
+    }
+    .imp-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 1.6rem;
+      border-top: 3px solid;
+    }
+    .imp-card:nth-child(1) { border-color: var(--gold); }
+    .imp-card:nth-child(2) { border-color: var(--magenta); }
+    .imp-card:nth-child(3) { border-color: var(--teal); }
+    .imp-card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem; margin-bottom: .7rem; color: var(--cream);
+    }
+    .imp-card p { font-size: .85rem; color: var(--muted); line-height: 1.65; }
+
+    /* ── GALERÍA ── */
+    #galeria { background: var(--surface); }
+    .gallery-masonry {
+      columns: 3; column-gap: 1rem;
+      margin-top: 2rem;
+    }
+    .gallery-masonry img {
+      width: 100%; margin-bottom: 1rem;
+      border-radius: var(--radius);
+      border: 1px solid rgba(200,137,10,.15);
+      filter: brightness(.8) saturate(1.15);
+      break-inside: avoid;
+      transition: filter .3s, transform .3s;
+      display: block;
+    }
+    .gallery-masonry img:hover {
+      filter: brightness(1) saturate(1.4);
+      transform: scale(1.02);
+    }
+
+    /* ── CONCLUSIÓN ── */
+    #conclusion { background: var(--bg); text-align: center; }
+    .conclusion-inner { max-width: 680px; margin: 0 auto; }
+    .big-quote {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.5rem, 4vw, 2.4rem);
+      font-weight: 700; font-style: italic;
+      color: var(--cream); line-height: 1.3;
+      margin: 2rem 0;
+    }
+    .big-quote span { color: var(--magenta); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: #0A0703;
+      border-top: 1px solid rgba(200,137,10,.2);
+      padding: 3rem 2rem;
+      text-align: center;
+    }
+    .footer-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem; color: var(--gold); margin-bottom: 1.2rem;
+    }
+    .authors {
+      display: flex; justify-content: center; gap: 2.5rem;
+      flex-wrap: wrap; margin-bottom: 1.5rem;
+    }
+    .author-chip {
+      background: var(--card);
+      border: 1px solid rgba(200,137,10,.25);
+      border-radius: 99px;
+      padding: .5rem 1.4rem;
+      font-size: .85rem; color: var(--cream);
+    }
+    .author-chip span { color: var(--gold); font-weight: 600; }
+    .footer-copy { font-size: .75rem; color: var(--muted); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 720px) {
+      .context-grid, .two-col { grid-template-columns: 1fr; }
+      .importance-grid { grid-template-columns: 1fr 1fr; }
+      .gallery-masonry { columns: 2; }
+      .nav-links { display: none; }
+    }
+    @media (max-width: 480px) {
+      .importance-grid { grid-template-columns: 1fr; }
+      .gallery-masonry { columns: 1; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .cw, .scroll-arrow { animation: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand">El Color es un Lenguaje</div>
+  <ul class="nav-links">
+    <li><a href="#contexto">Contexto</a></li>
+    <li><a href="#caracteristicas">Características</a></li>
+    <li><a href="#historia">Historia</a></li>
+    <li><a href="#circulo">Círculo Cromático</a></li>
+    <li><a href="#personajes">Personajes</a></li>
+    <li><a href="#galeria">Galería</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-bg"></div>
+  <p class="hero-eyebrow">Conferencia · Bogotá, Colombia</p>
+  <h1>
+    El <span class="accent-color">Color</span> es un<br/>
+    <span class="accent-gold">Lenguaje</span> Caprichoso
+  </h1>
+  <p class="hero-sub">— y una persona con colores nunca está sola —</p>
+  <p class="hero-desc">
+    Exploración de la historia del círculo cromático, sus protagonistas, sus armonías
+    y su poder como herramienta expresiva en el arte, el diseño y la vida cotidiana.
+  </p>
+  <div class="hero-scroll">
+    <div class="scroll-arrow"></div>
+    Explorar
+  </div>
+</header>
+
+<!-- TABLE OF CONTENTS -->
+<div style="background: var(--surface); padding: 4rem 2rem;">
+  <div class="toc-section" style="padding: 0 0;">
+    <p class="section-label">Tabla de Contenidos</p>
+    <h2 class="section-heading">¿Qué encontrarás <span>aquí?</span></h2>
+    <div class="toc-grid">
+      <a class="toc-item" href="#contexto">
+        <span class="toc-num">01</span>
+        <div class="toc-text">
+          <strong>Contexto General</strong>
+          <span>¿Por qué importa el color? Ciencia y percepción.</span>
+        </div>
+      </a>
+      <a class="toc-item" href="#caracteristicas">
+        <span class="toc-num">02</span>
+        <div class="toc-text">
+          <strong>Características del Color</strong>
+          <span>Propiedades, categorías y lenguaje subjetivo.</span>
+        </div>
+      </a>
+      <a class="toc-item" href="#historia">
+        <span class="toc-num">03</span>
+        <div class="toc-text">
+          <strong>Historia del Círculo</strong>
+          <span>De Newton a Goethe: el largo camino cromático.</span>
+        </div>
+      </a>
+      <a class="toc-item" href="#circulo">
+        <span class="toc-num">04</span>
+        <div class="toc-text">
+          <strong>Armonías de Color</strong>
+          <span>Complementarios, triadas, análogos y más.</span>
+        </div>
+      </a>
+      <a class="toc-item" href="#personajes">
+        <span class="toc-num">05</span>
+        <div class="toc-text">
+          <strong>Personajes Clave</strong>
+          <span>Mentes que construyeron el conocimiento del color.</span>
+        </div>
+      </a>
+      <a class="toc-item" href="#importancia">
+        <span class="toc-num">06</span>
+        <div class="toc-text">
+          <strong>¿Por qué saber de color?</strong>
+          <span>Aplicaciones reales en diseño, textil y arte.</span>
+        </div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="wheel-divider"><div style="position:relative;"><div class="cw"></div></div></div>
+
+<!-- CONTEXTO -->
+<section id="contexto">
+  <div class="container">
+    <p class="section-label">01 · Contexto</p>
+    <h2 class="section-heading">El color como <span>fenómeno</span> humano</h2>
+    <p class="lead">
+      El color no existe en el mundo físico: existe en la intersección entre la luz,
+      los objetos y el cerebro humano. Newton demostró que la luz blanca contiene
+      todos los colores; pero fue la fisiología del ojo y la neurología lo que explicó
+      por qué lo experimentamos tan intensamente.
+    </p>
+
+    <div class="context-grid">
+      <div>
+        <img src="1000110148.jpg" alt="Newton y la anatomía del ojo - diagrama de percepción visual" />
+      </div>
+      <div>
+        <div class="quote-block">
+          <p>"El color es el lugar donde nuestro cerebro y el universo se encuentran."</p>
+          <cite>— Paul Klee</cite>
+        </div>
+        <p style="color:var(--muted); font-size:.9rem; line-height:1.7;">
+          La luz entra por la <strong style="color:var(--cream);">córnea</strong>,
+          atraviesa el <strong style="color:var(--cream);">cristalino</strong>
+          y llega a la <strong style="color:var(--cream);">retina</strong>, donde los
+          <em>conos</em> (sensibles al color) y los <em>bastones</em> (para la luz y
+          la oscuridad) transforman las ondas electromagnéticas en señales nerviosas.
+          El cerebro construye el color: por eso es tan <em>caprichoso</em>.
+        </p>
+      </div>
+    </div>
+
+    <div class="context-grid" style="margin-top:2rem;">
+      <div>
+        <div class="quote-block" style="border-color: var(--teal); background: rgba(45,156,138,.07);">
+          <p>"Hola Bogotá — el color nos recibe en cada esquina, en cada mural, en cada piel."</p>
+          <cite>— Apertura de la conferencia</cite>
+        </div>
+        <p style="color:var(--muted); font-size:.9rem; line-height:1.7; margin-top:1rem;">
+          La conferencia fue presentada en Bogotá, Colombia — una ciudad que es en
+          sí misma un argumento vivo sobre el color: sus calles pintadas,
+          su arquitectura colonial y su vibrante escena de street art hablan
+          constantemente del poder del color como lenguaje cotidiano.
+        </p>
+      </div>
+      <div>
+        <img src="1000110216.jpg" alt="Hola Bogotá - ciudad y color" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wheel-divider"><div style="position:relative;"><div class="cw" style="animation-direction:reverse;"></div></div></div>
+
+<!-- CARACTERÍSTICAS -->
+<section id="caracteristicas">
+  <div class="container">
+    <p class="section-label">02 · Características</p>
+    <h2 class="section-heading">¿Qué <span>caracteriza</span> al color?</h2>
+    <p class="lead">
+      El color es simultáneamente físico, fisiológico y cultural.
+      Sus propiedades esenciales nos permiten describirlo, medirlo y comunicarlo.
+    </p>
+    <div class="cards-grid">
+      <div class="card">
+        <div class="card-icon">🌈</div>
+        <h3>Matiz (Hue)</h3>
+        <p>Es la identidad pura del color: lo que llamamos "rojo", "azul", "amarillo".
+        Corresponde a la longitud de onda dominante de la luz reflejada.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">☀️</div>
+        <h3>Valor (Luminosidad)</h3>
+        <p>Qué tan claro u oscuro es un color. Un mismo rojo puede ser
+        casi blanco (tinte) o casi negro (sombra), dependiendo de la luz
+        mezclada con él.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">💧</div>
+        <h3>Saturación (Croma)</h3>
+        <p>La intensidad o pureza del color. Un color muy saturado es vibrante;
+        uno poco saturado tiende al gris. La conferencia describió colores como
+        "transparente, brillante, opaco, aburrido…"</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🌡️</div>
+        <h3>Temperatura</h3>
+        <p>Colores cálidos (rojo, naranja, amarillo) versus fríos (azul, verde,
+        violeta). La temperatura afecta las percepciones psicológicas y espaciales.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🎭</div>
+        <h3>Lenguaje Caprichoso</h3>
+        <p>El color es subjetivo: cambia según el contexto, la luz, la cultura y
+        el observador. Lo que una persona ve como "verde" puede tener
+        un matiz diferente para otra.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🧬</div>
+        <h3>Conos y Bastones</h3>
+        <p>Tres tipos de conos en la retina captan el rojo, verde y azul.
+        El cerebro combina estas señales para crear los millones de colores
+        que percibimos.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wheel-divider"><div style="position:relative;"><div class="cw"></div></div></div>
+
+<!-- HISTORIA -->
+<section id="historia">
+  <div class="container">
+    <p class="section-label">03 · Historia</p>
+    <h2 class="section-heading">El largo camino del <span>círculo cromático</span></h2>
+    <p class="lead">
+      Desde la antigua Grecia hasta el siglo XIX, la comprensión del color fue construida
+      por filósofos, científicos y artistas que se desafiaron mutuamente.
+    </p>
+    <div class="timeline">
+
+      <div class="tl-item">
+        <div class="tl-dot">~450<br/>a.C.</div>
+        <div class="tl-content">
+          <h3>Filolao y la idea circular</h3>
+          <p>El filósofo pitagórico Filolao fue la primera persona conocida en postular que
+          la Tierra gira alrededor de un "fuego central". Esta concepción circular del universo
+          influyó en cómo Newton pensaría la disposición de los colores: en un círculo,
+          como los planetas alrededor del sol. Copérnico y Newton después se apoyaron en
+          este pensamiento para sus propias teorías.</p>
+          <img class="tl-img" src="1000110175.jpg" alt="¿Por qué un círculo? - Filolao" />
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot">1665</div>
+        <div class="tl-content">
+          <h3>Isaac Newton — El primer círculo cromático</h3>
+          <p>Newton pasó luz blanca por un prisma y la descompuso en 7 colores: rojo, naranja,
+          amarillo, verde, azul, índigo y violeta. Eligió 7 (no 6) para que se correspondieran
+          con las 7 notas musicales. Luego dobló el espectro en un círculo para mostrar
+          cómo los extremos (rojo y violeta) se unen. Era prematuro, tartamudo, amenazó
+          con quemar la casa de su madre y su padrastro (¡con ellos adentro!) y habló sólo
+          una vez en el Parlamento: para pedirle a alguien que cerrara una ventana.</p>
+          <img class="tl-img" src="1000110187.jpg" alt="Newton y su primer círculo cromático" />
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot">1810</div>
+        <div class="tl-content">
+          <h3>Wolfgang von Goethe — La teoría del color subjetivo</h3>
+          <p>Goethe desafió a Newton argumentando que el color no es solo física sino también
+          percepción y emoción. Su <em>Teoría de los Colores</em> (1810) fue el primer
+          intento sistemático de relacionar el color con la psicología humana. Aunque fue
+          combativo con Newton, sentó las bases para la colorimetría moderna y la psicología
+          del color. La conferencia lo presentó con gafas pixeladas como el verdadero ícono
+          del mundo del color.</p>
+          <img class="tl-img" src="1000110158.jpg" alt="Mr. Wolfgang von Goethe" />
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot">1814</div>
+        <div class="tl-content">
+          <h3>Patrick Syme — La Nomenclatura del Color de Werner</h3>
+          <p>Syme adaptó la obra del mineralogista Abraham Werner para crear un sistema de
+          nomenclatura del color que comparaba cada tono con objetos de la naturaleza (animales,
+          plantas, minerales). Darwin usó este sistema en sus diarios durante el viaje del
+          Beagle. Las descripciones incluían calificativos como "transparente, brillante,
+          opaco, aburrido…" — anticipando el lenguaje subjetivo del color.</p>
+          <img class="tl-img" src="1000110191.jpg" alt="La Nomenclatura del Color de Werner por Patrick Syme" />
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot">Siglo<br/>XIX</div>
+        <div class="tl-content">
+          <h3>Los atlas de color — Chevreul y los tintoreros</h3>
+          <p>Michel Eugène Chevreul, químico director de tinturas en los Gobelinos de París,
+          publicó en 1839 el primer atlas de color sistemático. Su trabajo nació de una
+          queja industrial: los clientes se quejaban de que los negros no eran suficientemente
+          negros. Descubrió que el problema era el <em>contraste simultáneo</em>: los colores
+          adyacentes se afectan mutuamente. Sus muestras físicas de tela y cinta, clasificadas
+          en rosa, azul y violeta, son las primeras muestras de Pantone avant la lettre.</p>
+          <img class="tl-img" src="1000110201.jpg" alt="Atlas de color - Chevreul" />
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="wheel-divider"><div style="position:relative;"><div class="cw" style="animation-direction:reverse;"></div></div></div>
+
+<!-- CÍRCULO CROMÁTICO Y ARMONÍAS -->
+<section id="circulo">
+  <div class="container">
+    <p class="section-label">04 · Círculo Cromático</p>
+    <h2 class="section-heading">Armonías de <span>color</span> — cualquier combinación funciona</h2>
+    <p class="lead">
+      El círculo cromático no es solo una herramienta pedagógica; es un mapa
+      de relaciones. Cualquier combinación geométrica dentro de él produce
+      una armonía válida.
+    </p>
+
+    <div class="two-col">
+      <div>
+        <img src="1000110172.jpg" alt="Armonías de color - complementarios, triada, análogos" />
+      </div>
+      <div>
+        <ul class="harmony-list">
+          <li>
+            <div class="h-dot" style="background: linear-gradient(135deg, #E82060, #2080E8);"></div>
+            <div>
+              <strong>Complementarios</strong>
+              <p>Colores diametralmente opuestos en el círculo. Crean el mayor contraste
+              y se intensifican mutuamente cuando están juntos.</p>
+            </div>
+          </li>
+          <li>
+            <div class="h-dot" style="background: linear-gradient(135deg, #E82060, #20E880, #2060E8);"></div>
+            <div>
+              <strong>Triada</strong>
+              <p>Cualquier grupo de tres colores que forman un triángulo equilátero o
+              isósceles. Vibrante y equilibrado simultáneamente.</p>
+            </div>
+          </li>
+          <li>
+            <div class="h-dot" style="background: linear-gradient(135deg, #E82060, #E88020, #2080E8, #20E880);"></div>
+            <div>
+              <strong>Cuadrado / Rectángulo (Tétrada)</strong>
+              <p>Cuatro colores formando un cuadrado o rectángulo en el círculo.
+              Rica variedad, requiere equilibrio en las proporciones.</p>
+            </div>
+          </li>
+          <li>
+            <div class="h-dot" style="background: conic-gradient(#E82060, #E84060, #E86080);"></div>
+            <div>
+              <strong>Análogos</strong>
+              <p>Tres o más colores que se tocan entre sí en el círculo.
+              Armoniosos, naturales, fáciles de aplicar.</p>
+            </div>
+          </li>
+          <li>
+            <div class="h-dot" style="background: linear-gradient(135deg, #E82060, #60E880, #8060E8);"></div>
+            <div>
+              <strong>Complementario Dividido</strong>
+              <p>Un color más los dos vecinos de su complementario.
+              Menos tenso que el complementario puro, pero igualmente vivo.</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="two-col" style="margin-top:3rem;">
+      <div>
+        <p style="color:var(--muted); font-size:.95rem; line-height:1.75;">
+          La presentación enfatizó que el círculo cromático no impone reglas,
+          sino que ofrece posibilidades. La clave es la intención:
+          saber <em>por qué</em> se elige una combinación es más valioso
+          que memorizar qué combinaciones "están permitidas".
+        </p>
+        <br/>
+        <div class="quote-block">
+          <p>"¿Qué quiero decir? — Esa es la pregunta que debe anteceder a cualquier elección de color."</p>
+          <cite>— Conferencia · Bogotá</cite>
+        </div>
+      </div>
+      <div>
+        <img src="1000110174.jpg" alt="¿Qué quiero decir? - expresividad del color" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wheel-divider"><div style="position:relative;"><div class="cw"></div></div></div>
+
+<!-- PERSONAJES -->
+<section id="personajes">
+  <div class="container">
+    <p class="section-label">05 · Personajes Clave</p>
+    <h2 class="section-heading">Las mentes que <span>construyeron</span> el color</h2>
+    <p class="lead">
+      La historia del color es una historia de personajes apasionados, excéntricos
+      y brillantes que transformaron un fenómeno sensorial en conocimiento universal.
+    </p>
+    <div class="personas-grid">
+      <div class="persona-card">
+        <img src="1000110189.jpg" alt="Isaac Newton" />
+        <div class="persona-body">
+          <h3>Isaac Newton (1643–1727)</h3>
+          <p>Físico, matemático y alquimista inglés. Descompuso la luz blanca con un prisma
+          y creó el primer círculo cromático de la historia con 7 colores asociados a las
+          notas musicales. Nació prematuro, era tartamudo y en el Parlamento habló una sola vez:
+          para pedir que cerraran una ventana.</p>
+        </div>
+      </div>
+      <div class="persona-card">
+        <img src="1000110163.jpg" alt="Wolfgang von Goethe" />
+        <div class="persona-body">
+          <h3>Johann Wolfgang von Goethe (1749–1832)</h3>
+          <p>Poeta, dramaturgo y científico alemán. Su <em>Teoría de los Colores</em> (1810)
+          fue el primer intento de estudiar el color desde la percepción y la emoción,
+          no solo desde la física. Desafió a Newton y sentó las bases de la psicología
+          del color moderna.</p>
+        </div>
+      </div>
+      <div class="persona-card">
+        <img src="1000110207.jpg" alt="Arte renacentista - Leonardo, Botticelli" />
+        <div class="persona-body">
+          <h3>Los Maestros del Renacimiento</h3>
+          <p>Leonardo da Vinci, Botticelli y Rafael exploraron el color como herramienta
+          narrativa y emocional. El <em>sfumato</em> de Da Vinci, los colores luminosos
+          de Botticelli en el <em>Nacimiento de Venus</em> y la Mona Lisa son hitos
+          del uso intencional del color en la historia del arte.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wheel-divider"><div style="position:relative;"><div class="cw" style="animation-direction:reverse;"></div></div></div>
+
+<!-- IMPORTANCIA -->
+<section id="importancia">
+  <div class="container">
+    <p class="section-label">06 · ¿Por qué importa?</p>
+    <h2 class="section-heading">La importancia de <span>saber de color</span></h2>
+    <p class="lead">
+      La conferencia planteó el color no como un adorno, sino como una competencia
+      profesional y vital. Dios · Color · Arte · Vida.
+    </p>
+    <div class="importance-grid">
+      <div class="imp-card">
+        <h3>Objetivar lo subjetivo</h3>
+        <p>El conocimiento del color permite convertir preferencias intuitivas en
+        decisiones justificadas. Pasar de "me gusta" a "funciona porque…" es
+        el salto de la emoción al oficio.</p>
+      </div>
+      <div class="imp-card">
+        <h3>Generar productos efectivos</h3>
+        <p>En áreas gráficas, textil, bordado, tejido, ilustración, diseño,
+        publicidad, colorimetría y alimentaria: el color bien aplicado
+        comunica, vende y emociona de manera consistente y controlada.</p>
+      </div>
+      <div class="imp-card">
+        <h3>El entorno como inspiración</h3>
+        <p>Una persona con colores nunca está sola. El mundo natural, arquitectónico
+        y cotidiano es un archivo infinito de paletas. La clave está en
+        aprender a leerlo con ojos entrenados.</p>
+      </div>
+    </div>
+    <div style="margin-top:2.5rem;">
+      <img src="1000110209.jpg" alt="Por qué es importante saber de color - diapositiva" 
+           style="width:100%; max-height:340px; object-fit:cover; border-radius:var(--radius);
+           border:1px solid rgba(200,137,10,.2); filter:brightness(.8) saturate(1.1);" />
+    </div>
+  </div>
+</section>
+
+<div class="wheel-divider"><div style="position:relative;"><div class="cw"></div></div></div>
+
+<!-- GALERÍA -->
+<section id="galeria">
+  <div class="container">
+    <p class="section-label">07 · Galería</p>
+    <h2 class="section-heading">Imágenes de la <span>conferencia</span></h2>
+    <p class="lead">Una selección visual del recorrido presentado en Bogotá.</p>
+    <div class="gallery-masonry">
+      <img src="1000110145.jpg" alt="Rueda de colores primarios y complementarios" />
+      <img src="1000110203.jpg" alt="Círculo cromático creativo con Capilla Sixtina y Picasso" />
+      <img src="1000110166.jpg" alt="El color es un lenguaje caprichoso" />
+      <img src="1000110197.jpg" alt="Newton - datos curiosos de su vida" />
+      <img src="1000110226.jpg" alt="Una persona con colores nunca está sola" />
+      <img src="1000110199.jpg" alt="Armonías de color - combinaciones del círculo cromático" />
+      <img src="1000110212.jpg" alt="Dios, Color, Arte, Vida - importancia del color" />
+    </div>
+  </div>
+</section>
+
+<!-- CONCLUSIÓN -->
+<section id="conclusion">
+  <div class="container">
+    <div class="conclusion-inner">
+      <p class="section-label" style="text-align:center;">Conclusión</p>
+      <p class="big-quote">
+        "El color es un lenguaje <span>caprichoso</span> — aprenderlo
+        es aprender a hablar con el universo."
+      </p>
+      <p style="color:var(--muted); font-size:.95rem; max-width:520px; margin:0 auto;">
+        Desde Newton hasta los tintoreros de París, desde la retina hasta los murales de Bogotá,
+        el color ha sido siempre una conversación entre la luz, el ojo y el alma humana.
+        Dominarlo no es un privilegio artístico: es una herramienta para todos.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p class="footer-title">Autores de esta página</p>
+  <div class="authors">
+    <div class="author-chip"><span>Cristian Camilo</span> Baena Ruiz</div>
+    <div class="author-chip"><span>Johan</span> Noscue</div>
+  </div>
+  <p class="footer-copy">
+    Basado en la conferencia <em>"El Color es un Lenguaje Caprichoso"</em> presentada en Bogotá, Colombia. 
+    · Contenido académico sin fines comerciales.
+  </p>
+</footer>
+
+</body>
+</html>
